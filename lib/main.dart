@@ -57,6 +57,7 @@ class _LogonWidgetState extends State<LogonWidget> {
           TextField(
             controller: _userNameController,
             maxLines: 1,
+
             decoration: InputDecoration(
               hintText: 'Username',
             ),
@@ -67,6 +68,7 @@ class _LogonWidgetState extends State<LogonWidget> {
           TextField(
             controller: _passwordController,
             maxLines: 1,
+            obscureText: true,
             decoration: InputDecoration(
               hintText: 'Password',
             ),
