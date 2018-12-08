@@ -42,16 +42,27 @@ class _LogonWidgetState extends State<LogonWidget> {
   final TextEditingController _userNameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  // Initially password is obscure
+  bool _obscureText = true;
+
+// Toggles the password show status
+  void _toggle() {
+    setState(() {
+      _obscureText = !_obscureText;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
+
       padding: const EdgeInsets.all(15.0),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.pink),
         borderRadius: BorderRadius.all(Radius.circular(10.0)),
       ),
-      //color: Colors.grey,
       child: Column(
+
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           TextField(
@@ -68,7 +79,7 @@ class _LogonWidgetState extends State<LogonWidget> {
           TextField(
             controller: _passwordController,
             maxLines: 1,
-            obscureText: true,
+            obscureText: _obscureText,
             decoration: InputDecoration(
               hintText: 'Password',
             ),
@@ -77,6 +88,9 @@ class _LogonWidgetState extends State<LogonWidget> {
                 print('This will not get called when return is pressed'),
           ),
           SizedBox(height: 10.0),
+          new FlatButton(
+              onPressed: _toggle,
+              child: new Text(_obscureText ? "Show Password" : "Hide Password")),
           FlatButton(
             onPressed: () => _authenticate(
                 context, _userNameController.text, _passwordController.text),
@@ -87,6 +101,7 @@ class _LogonWidgetState extends State<LogonWidget> {
     );
   }
 }
+
 
 _authenticate(BuildContext context, String username, String password) {
   Navigator.push(
