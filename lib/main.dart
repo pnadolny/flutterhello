@@ -30,7 +30,6 @@ class App extends StatelessWidget {
   }
 }
 
-
 /// Multi-line text field widget with a submit button
 class LogonWidget extends StatefulWidget {
   LogonWidget({Key key}) : super(key: key);
@@ -39,9 +38,7 @@ class LogonWidget extends StatefulWidget {
   createState() => _LogonWidgetState();
 }
 
-class _LogonWidgetState
-    extends State<LogonWidget> {
-
+class _LogonWidgetState extends State<LogonWidget> {
   final TextEditingController _userNameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -79,11 +76,9 @@ class _LogonWidgetState
           ),
           SizedBox(height: 10.0),
           FlatButton(
-            onPressed: () => _showInSnackBar(
-              context,
-              '${_userNameController.text}' + '${_passwordController.text}' ,
-            ),
-            child: const Text('Submit'),
+            onPressed: () => _authenticate(
+                context, _userNameController.text, _passwordController.text),
+            child: const Text('Sign In'),
           ),
         ],
       ),
@@ -91,11 +86,37 @@ class _LogonWidgetState
   }
 }
 
+_authenticate(BuildContext context, String username, String password) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => SecondScreen()),
+  );
+}
+
 /// Displays text in a snackbar
 _showInSnackBar(BuildContext context, String text) {
   Scaffold.of(context).showSnackBar(SnackBar(
     content: Text(text),
   ));
+}
+
+class SecondScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Second Screen"),
+      ),
+      body: Center(
+        child: RaisedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text('Go back!'),
+        ),
+      ),
+    );
+  }
 }
 
 class LogonPage extends StatefulWidget {
@@ -106,10 +127,8 @@ class LogonPage extends StatefulWidget {
 }
 
 class _LogonPageState extends State<LogonPage> {
-
   var _username;
   var _password;
-
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +136,6 @@ class _LogonPageState extends State<LogonPage> {
         appBar: AppBar(
           title: Text('Sign In'),
         ),
-
         floatingActionButton: FlatButton(
           onPressed: _signin,
           child: Text('Sign In'),
@@ -128,4 +146,3 @@ class _LogonPageState extends State<LogonPage> {
     setState(() {});
   }
 }
-
