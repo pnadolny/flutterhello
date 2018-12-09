@@ -106,9 +106,10 @@ class _LogonWidgetState extends State<LogonWidget> {
                   new Text(_obscureText ? "Show Password" : "Hide Password")),
           RaisedButton(
             onPressed: () {
+
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => LogonProgress()),
+                MaterialPageRoute(builder: (context) => LogonProgress(username:_userNameController.text, password:_passwordController.text)),
               );
             },
             child: const Text('Sign In'),
@@ -119,9 +120,19 @@ class _LogonWidgetState extends State<LogonWidget> {
   }
 }
 
-class LogonProgress extends StatelessWidget {
+class LogonProgress extends StatefulWidget {
 
+  final String username;
+  final String password;
 
+  LogonProgress({Key key, this.username, this.password}) : super(key: key);
+
+  @override
+  LogonProgressState createState() => new LogonProgressState();
+
+}
+
+class LogonProgressState extends State<LogonProgress> {
 
   @override
   Widget build(BuildContext context) {
@@ -131,7 +142,7 @@ class LogonProgress extends StatelessWidget {
       ),
       body: Center(
           child: FutureBuilder<AuthenticationResponse>(
-              future: getUser('username', 'password'),
+              future: getUser(widget.username, widget.password),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return Text('Welcome ' + snapshot.data.username);
@@ -144,6 +155,7 @@ class LogonProgress extends StatelessWidget {
     );
   }
 }
+
 
 /// Displays text in a snackbar
 _showInSnackBar(BuildContext context, String text) {
