@@ -4,11 +4,9 @@ import 'dart:convert';
 import 'models.dart';
 import 'package:http/http.dart' as http;
 
-
 void main() => runApp(App());
 
 class App extends StatelessWidget {
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -36,10 +34,9 @@ class App extends StatelessWidget {
   }
 }
 
-
-Future<AuthenticationResponse> getUser() async {
+Future<AuthenticationResponse> getUser(String username, String password) async {
   final response =
-  await http.get('https://jsonplaceholder.typicode.com/users/1');
+      await http.get('https://jsonplaceholder.typicode.com/users/1');
   if (response.statusCode == 200) {
     // If the call to the server was successful, parse the JSON
     return AuthenticationResponse.fromJson(json.decode(response.body));
@@ -49,11 +46,7 @@ Future<AuthenticationResponse> getUser() async {
   }
 }
 
-
 class LogonWidget extends StatefulWidget {
-  final Future<AuthenticationResponse> getUser;
-  LogonWidget({Key key, this.getUser}) : super(key: key);
-
   @override
   createState() => _LogonWidgetState();
 }
@@ -75,22 +68,19 @@ class _LogonWidgetState extends State<LogonWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-
       padding: const EdgeInsets.all(15.0),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.pink),
+        border: Border.all(color: Colors.blue),
         borderRadius: BorderRadius.all(Radius.circular(10.0)),
       ),
       child: Column(
-
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Image
-              .network('https://flutter.io/images/flutter-mark-square-100.png'),
+          Image.network(
+              'https://flutter.io/images/flutter-mark-square-100.png'),
           TextField(
             controller: _userNameController,
             maxLines: 1,
-
             decoration: InputDecoration(
               hintText: 'Username',
             ),
@@ -110,12 +100,17 @@ class _LogonWidgetState extends State<LogonWidget> {
                 print('This will not get called when return is pressed'),
           ),
           SizedBox(height: 10.0),
-          new FlatButton(
-              onPressed: _toggle,
-              child: new Text(_obscureText ? "Show Password" : "Hide Password")),
           FlatButton(
-            onPressed: () => _authenticate(
-                context, _userNameController.text, _passwordController.text),
+              onPressed: _toggle,
+              child:
+                  new Text(_obscureText ? "Show Password" : "Hide Password")),
+          RaisedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => LogonProgress()),
+              );
+            },
             child: const Text('Sign In'),
           )
         ],
@@ -124,18 +119,9 @@ class _LogonWidgetState extends State<LogonWidget> {
   }
 }
 
-
-
-_authenticate(BuildContext context, String username, String password) {
-
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => LogonProgress()),
-  );
-}
-
-
 class LogonProgress extends StatelessWidget {
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -144,25 +130,20 @@ class LogonProgress extends StatelessWidget {
         title: Text("Logging in..."),
       ),
       body: Center(
-        child: FutureBuilder<AuthenticationResponse>(
-            future: getUser(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return Text('Welcome ' + snapshot.data.username);
-
-              } else if (snapshot.hasError) {
-                return Text("${snapshot.error}");
-              }
-              // By default, show a loading spinner
-              return CircularProgressIndicator();
-            }
-        )
-      ),
+          child: FutureBuilder<AuthenticationResponse>(
+              future: getUser('username', 'password'),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Text('Welcome ' + snapshot.data.username);
+                } else if (snapshot.hasError) {
+                  return Text("${snapshot.error}");
+                }
+                // By default, show a loading spinner
+                return CircularProgressIndicator();
+              })),
     );
   }
-
 }
-
 
 /// Displays text in a snackbar
 _showInSnackBar(BuildContext context, String text) {
@@ -172,7 +153,6 @@ _showInSnackBar(BuildContext context, String text) {
 }
 
 class SecondScreen extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -190,4 +170,3 @@ class SecondScreen extends StatelessWidget {
     );
   }
 }
-
