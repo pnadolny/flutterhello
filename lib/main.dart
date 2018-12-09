@@ -35,6 +35,10 @@ class App extends StatelessWidget {
 }
 
 Future<AuthenticationResponse> getUser(String username, String password) async {
+
+  print(username);
+  print(password);
+
   final response =
       await http.get('https://jsonplaceholder.typicode.com/users/1');
   if (response.statusCode == 200) {
@@ -78,6 +82,7 @@ class _LogonWidgetState extends State<LogonWidget> {
         children: <Widget>[
           Image.network(
               'https://flutter.io/images/flutter-mark-square-100.png'),
+
           TextField(
             controller: _userNameController,
             maxLines: 1,
@@ -107,9 +112,10 @@ class _LogonWidgetState extends State<LogonWidget> {
           RaisedButton(
             onPressed: () {
 
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => LogonProgress(username:_userNameController.text, password:_passwordController.text)),
+
               );
             },
             child: const Text('Sign In'),
@@ -142,6 +148,7 @@ class LogonProgressState extends State<LogonProgress> {
       ),
       body: Center(
           child: FutureBuilder<AuthenticationResponse>(
+            //  initialData: AuthenticationResponse(username: 'Loading...'),
               future: getUser(widget.username, widget.password),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
