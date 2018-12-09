@@ -35,7 +35,6 @@ class App extends StatelessWidget {
 }
 
 Future<AuthenticationResponse> getUser(String username, String password) async {
-
   print(username);
   print(password);
 
@@ -59,6 +58,8 @@ class _LogonWidgetState extends State<LogonWidget> {
   final TextEditingController _userNameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  final _formKey = GlobalKey<FormState>();
+
   // Initially password is obscure
   bool _obscureText = true;
 
@@ -71,104 +72,74 @@ class _LogonWidgetState extends State<LogonWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(15.0),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.blue),
-        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Image.network(
-              'https://flutter.io/images/flutter-mark-square-100.png'),
-
-          TextField(
-            controller: _userNameController,
-            maxLines: 1,
-            decoration: InputDecoration(
-              hintText: 'Username',
-            ),
-            onChanged: (str) => print('Multi-line text change: $str'),
-            onSubmitted: (str) =>
-                print('This will not get called when return is pressed'),
+    return Form(
+        key: _formKey,
+        child: Container(
+          padding: const EdgeInsets.all(15.0),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.blue),
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
           ),
-          TextField(
-            controller: _passwordController,
-            maxLines: 1,
-            obscureText: _obscureText,
-            decoration: InputDecoration(
-              hintText: 'Password',
-            ),
-            onChanged: (str) => print('Multi-line text change: $str'),
-            onSubmitted: (str) =>
-                print('This will not get called when return is pressed'),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Image.network(
+                  'https://flutter.io/images/flutter-mark-square-100.png'),
+              SizedBox(height: 12.0),
+
+              TextFormField(
+                controller: _userNameController,
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Please enter a valid username';
+                  }
+                },
+                decoration: InputDecoration(
+                  filled: true,
+                  hintText: 'Username',
+                ),
+              ),
+              // spacer
+              SizedBox(height: 12.0),
+              TextFormField(
+                controller: _passwordController,
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Please enter a valid password';
+                  }
+                },
+                obscureText: _obscureText,
+                decoration: InputDecoration(
+                  filled: true,
+                  hintText: 'Password',
+                ),
+              ),
+              SizedBox(height: 10.0),
+              FlatButton(
+                  onPressed: _toggle,
+                  child: new Text(
+                      _obscureText ? "Show Password" : "Hide Password")),
+              RaisedButton(
+                onPressed: () {
+                  if (_formKey.currentState.validate()) {
+                    Scaffold
+                        .of(context)
+                        .showSnackBar(SnackBar(content: Text('Signing in..')));
+                    getUser(_userNameController.text, _passwordController.text)
+                        .then((data) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SecondScreen()),
+                      );
+                    });
+                  }
+                },
+                child: const Text('Sign In'),
+              )
+            ],
           ),
-          SizedBox(height: 10.0),
-          FlatButton(
-              onPressed: _toggle,
-              child:
-                  new Text(_obscureText ? "Show Password" : "Hide Password")),
-          RaisedButton(
-            onPressed: () {
-
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => LogonProgress(username:_userNameController.text, password:_passwordController.text)),
-
-              );
-            },
-            child: const Text('Sign In'),
-          )
-        ],
-      ),
-    );
+        ));
   }
-}
-
-class LogonProgress extends StatefulWidget {
-
-  final String username;
-  final String password;
-
-  LogonProgress({Key key, this.username, this.password}) : super(key: key);
-
-  @override
-  LogonProgressState createState() => new LogonProgressState();
-
-}
-
-class LogonProgressState extends State<LogonProgress> {
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Logging in..."),
-      ),
-      body: Center(
-          child: FutureBuilder<AuthenticationResponse>(
-            //  initialData: AuthenticationResponse(username: 'Loading...'),
-              future: getUser(widget.username, widget.password),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return Text('Welcome ' + snapshot.data.username);
-                } else if (snapshot.hasError) {
-                  return Text("${snapshot.error}");
-                }
-                // By default, show a loading spinner
-                return CircularProgressIndicator();
-              })),
-    );
-  }
-}
-
-
-/// Displays text in a snackbar
-_showInSnackBar(BuildContext context, String text) {
-  Scaffold.of(context).showSnackBar(SnackBar(
-    content: Text(text),
-  ));
 }
 
 class SecondScreen extends StatelessWidget {
