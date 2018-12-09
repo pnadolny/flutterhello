@@ -37,7 +37,6 @@ class App extends StatelessWidget {
 Future<AuthenticationResponse> getUser(String username, String password) async {
   print(username);
   print(password);
-
   final response =
       await http.get('https://jsonplaceholder.typicode.com/users/1');
   if (response.statusCode == 200) {
@@ -83,10 +82,6 @@ class _LogonWidgetState extends State<LogonWidget> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Image.network(
-                  'https://flutter.io/images/flutter-mark-square-100.png'),
-              SizedBox(height: 12.0),
-
               TextFormField(
                 controller: _userNameController,
                 validator: (value) {
@@ -122,8 +117,7 @@ class _LogonWidgetState extends State<LogonWidget> {
               RaisedButton(
                 onPressed: () {
                   if (_formKey.currentState.validate()) {
-                    Scaffold
-                        .of(context)
+                    Scaffold.of(context)
                         .showSnackBar(SnackBar(content: Text('Signing in..')));
                     getUser(_userNameController.text, _passwordController.text)
                         .then((data) {
@@ -131,6 +125,9 @@ class _LogonWidgetState extends State<LogonWidget> {
                         context,
                         MaterialPageRoute(builder: (context) => SecondScreen()),
                       );
+                    }).catchError((onError) {
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                          content: Text('Invalid username or password')));
                     });
                   }
                 },
