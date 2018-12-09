@@ -125,9 +125,10 @@ class _LogonWidgetState extends State<LogonWidget> {
                         context,
                         MaterialPageRoute(builder: (context) => SecondScreen()),
                       );
-                    }).catchError((onError) {
+                    }).catchError((e) {
+
                       Scaffold.of(context).showSnackBar(SnackBar(
-                          content: Text('Invalid username or password')));
+                          content: Text('$e')));
                     });
                   }
                 },
