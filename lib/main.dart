@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'models.dart';
+import 'package:http/http.dart' as http;
+
 
 void main() => runApp(App());
 
 class App extends StatelessWidget {
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Hello Flutter',
       theme: ThemeData(
-        primarySwatch: Colors.pink,
+        primarySwatch: Colors.blue,
       ),
       home: Scaffold(
-        resizeToAvoidBottomPadding: false,
+        resizeToAvoidBottomPadding: true,
         appBar: AppBar(
           title: const Text('Sign In'),
         ),
@@ -31,9 +36,23 @@ class App extends StatelessWidget {
   }
 }
 
-/// Multi-line text field widget with a submit button
+
+Future<AuthenticationResponse> getUser() async {
+  final response =
+  await http.get('https://jsonplaceholder.typicode.com/users/1');
+  if (response.statusCode == 200) {
+    // If the call to the server was successful, parse the JSON
+    return AuthenticationResponse.fromJson(json.decode(response.body));
+  } else {
+    // If that call was not successful, throw an error.
+    throw Exception('Failed to load user');
+  }
+}
+
+
 class LogonWidget extends StatefulWidget {
-  LogonWidget({Key key}) : super(key: key);
+  final Future<AuthenticationResponse> getUser;
+  LogonWidget({Key key, this.getUser}) : super(key: key);
 
   @override
   createState() => _LogonWidgetState();
@@ -66,6 +85,8 @@ class _LogonWidgetState extends State<LogonWidget> {
 
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
+          Image
+              .network('https://flutter.io/images/flutter-mark-square-100.png'),
           TextField(
             controller: _userNameController,
             maxLines: 1,
@@ -96,7 +117,7 @@ class _LogonWidgetState extends State<LogonWidget> {
             onPressed: () => _authenticate(
                 context, _userNameController.text, _passwordController.text),
             child: const Text('Sign In'),
-          ),
+          )
         ],
       ),
     );
@@ -104,15 +125,44 @@ class _LogonWidgetState extends State<LogonWidget> {
 }
 
 
+
 _authenticate(BuildContext context, String username, String password) {
-
-
 
   Navigator.push(
     context,
-    MaterialPageRoute(builder: (context) => SecondScreen()),
+    MaterialPageRoute(builder: (context) => LogonProgress()),
   );
 }
+
+
+class LogonProgress extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Logging in..."),
+      ),
+      body: Center(
+        child: FutureBuilder<AuthenticationResponse>(
+            future: getUser(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Text('Welcome ' + snapshot.data.username);
+
+              } else if (snapshot.hasError) {
+                return Text("${snapshot.error}");
+              }
+              // By default, show a loading spinner
+              return CircularProgressIndicator();
+            }
+        )
+      ),
+    );
+  }
+
+}
+
 
 /// Displays text in a snackbar
 _showInSnackBar(BuildContext context, String text) {
@@ -122,6 +172,7 @@ _showInSnackBar(BuildContext context, String text) {
 }
 
 class SecondScreen extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -140,30 +191,3 @@ class SecondScreen extends StatelessWidget {
   }
 }
 
-class LogonPage extends StatefulWidget {
-  LogonPage({Key key}) : super(key: key);
-
-  @override
-  _LogonPageState createState() => _LogonPageState();
-}
-
-class _LogonPageState extends State<LogonPage> {
-  var _username;
-  var _password;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text('Sign In'),
-        ),
-        floatingActionButton: FlatButton(
-          onPressed: _signin,
-          child: Text('Sign In'),
-        ));
-  }
-
-  void _signin() {
-    setState(() {});
-  }
-}
