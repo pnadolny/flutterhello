@@ -79,7 +79,7 @@ class _LogonWidgetState extends State<LogonWidget> {
             border: Border.all(color: Colors.blue),
             borderRadius: BorderRadius.all(Radius.circular(10.0)),
           ),
-          child: Column(
+          child: new Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               TextFormField(
@@ -123,12 +123,12 @@ class _LogonWidgetState extends State<LogonWidget> {
                         .then((data) {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => SecondScreen()),
+                        MaterialPageRoute(
+                            builder: (context) => AccountWidget()),
                       );
                     }).catchError((e) {
-
-                      Scaffold.of(context).showSnackBar(SnackBar(
-                          content: Text('$e')));
+                      Scaffold.of(context)
+                          .showSnackBar(SnackBar(content: Text('$e')));
                     });
                   }
                 },
@@ -140,21 +140,56 @@ class _LogonWidgetState extends State<LogonWidget> {
   }
 }
 
-class SecondScreen extends StatelessWidget {
+class AccountWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Second Screen"),
-      ),
-      body: Center(
-        child: RaisedButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: Text('Go back!'),
+        appBar: AppBar(
+          title: Text("Accounts"),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.add_comment),
+              tooltip: 'Air it',
+              //       onPressed: _airDress,
+            ),
+            IconButton(
+              icon: Icon(Icons.playlist_add),
+              tooltip: 'Restitch it',
+              //          onPressed: _restitchDress,
+            ),
+            IconButton(
+              icon: Icon(Icons.playlist_add_check),
+              tooltip: 'Repair it',
+              //        onPressed: _repairDress,
+            ),
+          ],
         ),
-      ),
-    );
+        body: Container(
+          child: Card(
+            child: new FutureBuilder(
+                future: DefaultAssetBundle.of(context)
+                    .loadString('data_repo/accounts.json'),
+                builder: (context, snapshot) {
+                  // Decode the JSON
+                  var accounts = json.decode(snapshot.data.toString());
+
+                  return new ListView.builder(
+                    // Build the ListView
+                    itemBuilder: (BuildContext context, int index) {
+                      return new Card(
+                        child: new Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            new Text("Name: " + accounts[index]['name']),
+                            new Text("Id: " + accounts[index]['id']),
+                          ],
+                        ),
+                      );
+                    },
+                    itemCount: accounts == null ? 0 : accounts.length,
+                  );
+                }),
+          ),
+        ));
   }
 }

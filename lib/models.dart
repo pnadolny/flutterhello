@@ -10,3 +10,18 @@ class AuthenticationResponse {
     );
   }
 }
+
+class Account {
+  final int id;
+  final String name;
+
+  Account({this.id, this.name});
+
+  factory Account.fromJson(Map<String, dynamic> json) {
+    return Account(
+        id: json['id'],
+        name: json['name']
+    );
+  }
+
+}
