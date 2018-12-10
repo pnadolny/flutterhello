@@ -180,10 +180,20 @@ class AccountWidget extends StatelessWidget {
                         child: new Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: <Widget>[
-                            new Text("Name: " + accounts[index]['name']),
-                            new Text("Id: " + accounts[index]['id']),
+                            Container(
+                              child: new Text(
+                                // Read the name field value and set it in the Text widget
+                                accounts[index]['name'],
+                                // set some style to text
+                                style: new TextStyle(
+                                    fontSize: 20.0, color: Colors.lightBlueAccent),
+                              ),
+                              // added padding
+                              padding: const EdgeInsets.all(15.0),
+                            )
                           ],
                         ),
+
                       );
                     },
                     itemCount: accounts == null ? 0 : accounts.length,
