@@ -37,16 +37,20 @@ class AccountWidget extends StatelessWidget {
                   return new ListView.builder(
                     // Build the ListView
                     itemBuilder: (BuildContext context, int index) {
-                      return new Card(
-                        child: new Column(
+
+                      return GestureDetector(onTap: ()=>
+                        print('Hello' + accounts[index]['id'])
+                      ,child: Card(
+
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: <Widget>[
                             Container(
-                              child: new Text(
+                              child: Text(
                                 // Read the name field value and set it in the Text widget
                                 accounts[index]['name'],
                                 // set some style to text
-                                style: new TextStyle(
+                                style: TextStyle(
                                     fontSize: 20.0,
                                     color: Colors.lightBlueAccent),
                               ),
@@ -55,6 +59,7 @@ class AccountWidget extends StatelessWidget {
                             )
                           ],
                         ),
+                      )
                       );
                     },
                     itemCount: accounts == null ? 0 : accounts.length,

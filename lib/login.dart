@@ -75,7 +75,7 @@ class _LogonWidgetState extends State<LogonWidget> {
                         _userNameController.clear();
                         _passwordController.clear();
                       },
-                      child: new Text('CANCEL')),
+                      child: new Text('RESET')),
                   RaisedButton(
                     onPressed: () {
                       if (_formKey.currentState.validate()) {
