@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'dart:convert';
+
+import 'package:flutter/material.dart';
 
 class AccountWidget extends StatelessWidget {
   @override
@@ -9,62 +10,56 @@ class AccountWidget extends StatelessWidget {
           title: Text("Accounts"),
           actions: <Widget>[
             IconButton(
-              icon: Icon(Icons.add_comment),
-              tooltip: 'Air it',
+              icon: Icon(Icons.refresh),
+              tooltip: 'Refresh',
               //       onPressed: _airDress,
-            ),
-            IconButton(
-              icon: Icon(Icons.playlist_add),
-              tooltip: 'Restitch it',
-              //          onPressed: _restitchDress,
-            ),
-            IconButton(
-              icon: Icon(Icons.playlist_add_check),
-              tooltip: 'Repair it',
-              //        onPressed: _repairDress,
-            ),
+            )
           ],
         ),
-        body: Container(
-          child: Card(
-            child: new FutureBuilder(
-                future: DefaultAssetBundle.of(context)
-                    .loadString('data_repo/accounts.json'),
-                builder: (context, snapshot) {
-                  // Decode the JSON
-                  var accounts = json.decode(snapshot.data.toString());
+        body: SafeArea(
+          child: Container(
 
-                  return new ListView.builder(
-                    // Build the ListView
-                    itemBuilder: (BuildContext context, int index) {
+            child: Card(
 
-                      return GestureDetector(onTap: ()=>
-                        print('Hello' + accounts[index]['id'])
-                      ,child: Card(
+              child: new FutureBuilder(
+                  future: DefaultAssetBundle.of(context)
+                      .loadString('data_repo/accounts.json'),
+                  builder: (context, snapshot) {
+                    // Decode the JSON
+                    var accounts = json.decode(snapshot.data.toString());
 
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: <Widget>[
-                            Container(
-                              child: Text(
-                                // Read the name field value and set it in the Text widget
-                                accounts[index]['name'],
-                                // set some style to text
-                                style: TextStyle(
-                                    fontSize: 20.0,
-                                    color: Colors.lightBlueAccent),
-                              ),
-                              // added padding
-                              padding: const EdgeInsets.all(15.0),
-                            )
-                          ],
-                        ),
-                      )
-                      );
-                    },
-                    itemCount: accounts == null ? 0 : accounts.length,
-                  );
-                }),
+                    return new ListView.builder(
+                      // Build the ListView
+                      itemBuilder: (BuildContext context, int index) {
+
+                        return GestureDetector(onTap: ()=>
+                          print('Hello' + accounts[index]['id'])
+                        ,child: Card(
+
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: <Widget>[
+                              Container(
+                                child: Text(
+                                  // Read the name field value and set it in the Text widget
+                                  accounts[index]['name'],
+                                  // set some style to text
+                                  style: TextStyle(
+                                      fontSize: 20.0,
+                                      color: Colors.lightBlueAccent),
+                                ),
+                                // added padding
+                                padding: const EdgeInsets.all(15.0),
+                              )
+                            ],
+                          ),
+                        )
+                        );
+                      },
+                      itemCount: accounts == null ? 0 : accounts.length,
+                    );
+                  }),
+            ),
           ),
         ));
   }
