@@ -2,6 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 
+import 'styles.dart';
+
+
 class AccountWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -44,9 +47,7 @@ class AccountWidget extends StatelessWidget {
                                   // Read the name field value and set it in the Text widget
                                   accounts[index]['name'],
                                   // set some style to text
-                                  style: TextStyle(
-                                      fontSize: 20.0,
-                                      color: Colors.lightBlueAccent),
+                                  style: Styles.baseTextStyle
                                 ),
                                 // added padding
                                 padding: const EdgeInsets.all(15.0),
