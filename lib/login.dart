@@ -82,7 +82,7 @@ class _LogonWidgetState extends State<LogonWidget> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => AccountWidget()),
+                                builder: (context) => AccountWidget(user: User())),
                           );
                         }).catchError((e) {
                           Scaffold.of(context)
