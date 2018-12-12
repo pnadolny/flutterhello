@@ -16,13 +16,13 @@ class App extends StatelessWidget {
       home: Scaffold(
         resizeToAvoidBottomPadding: true,
         appBar: AppBar(
-          title: const Text('Sign In'),
+          title: Text('Sign In'),
         ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(8.0),
               child: LogonWidget(),
             ),
           ],
