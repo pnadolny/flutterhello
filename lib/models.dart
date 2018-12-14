@@ -1,5 +1,6 @@
 
 import 'package:scoped_model/scoped_model.dart';
+import 'package:flutter/material.dart';
 
 
 class AuthenticationResponse {
@@ -36,6 +37,8 @@ class User extends Model {
     this._name = name;
     notifyListeners();
   }
+  static User of(BuildContext context) =>
+      ScopedModel.of<User>(context);
 
 }
 

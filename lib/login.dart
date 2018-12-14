@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 
 import 'accounts.dart';
 import 'models.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LogonWidget extends StatefulWidget {
   @override
@@ -16,6 +17,22 @@ class _LogonWidgetState extends State<LogonWidget> {
   final TextEditingController _userNameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  _getSavedCredentials() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _userNameController.text = prefs.getString('username');
+      _passwordController.text = prefs.getString('password');
+    });
+  }
+
+  _saveCredentials() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      prefs.setString("username", _userNameController.text);
+      prefs.setString("password", _passwordController.text);
+    });
+  }
+
   final _formKey = GlobalKey<FormState>();
 
   // Initially password is obscure
@@ -23,6 +40,8 @@ class _LogonWidgetState extends State<LogonWidget> {
 
   @override
   Widget build(BuildContext context) {
+    _getSavedCredentials();
+
     return Form(
         key: _formKey,
         child: Container(
@@ -77,12 +96,15 @@ class _LogonWidgetState extends State<LogonWidget> {
                         Scaffold.of(context).showSnackBar(
                             SnackBar(content: Text('Signing in...')));
                         getUser(_userNameController.text,
-                            _passwordController.text)
+                                _passwordController.text)
                             .then((data) {
+                          _saveCredentials();
+
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => AccountWidget(user: User())),
+                                builder: (context) =>
+                                    AccountWidget(user: User())),
                           );
                         }).catchError((e) {
                           Scaffold.of(context)
@@ -99,11 +121,13 @@ class _LogonWidgetState extends State<LogonWidget> {
         ));
   }
 
-  Future<AuthenticationResponse> getUser(String username, String password) async {
+  Future<AuthenticationResponse> getUser(
+      String username, String password) async {
     print(username);
     print(password);
+
     final response =
-    await http.get('https://jsonplaceholder.typicode.com/users/1');
+        await http.get('https://jsonplaceholder.typicode.com/users/1');
     if (response.statusCode == 200) {
       // If the call to the server was successful, parse the JSON
       return AuthenticationResponse.fromJson(json.decode(response.body));
@@ -112,5 +136,4 @@ class _LogonWidgetState extends State<LogonWidget> {
       throw Exception('Failed to load user');
     }
   }
-
 }
