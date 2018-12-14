@@ -21,7 +21,6 @@ class _LogonWidgetState extends State<LogonWidget> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       _userNameController.text = prefs.getString('username');
-      _passwordController.text = prefs.getString('password');
     });
   }
 
@@ -29,7 +28,6 @@ class _LogonWidgetState extends State<LogonWidget> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       prefs.setString("username", _userNameController.text);
-      prefs.setString("password", _passwordController.text);
     });
   }
 
