@@ -33,9 +33,6 @@ class _LogonWidgetState extends State<LogonWidget> {
 
   final _formKey = GlobalKey<FormState>();
 
-  // Initially password is obscure
-  bool _obscureText = true;
-
   @override
   Widget build(BuildContext context) {
     _getSavedCredentials();
@@ -43,14 +40,15 @@ class _LogonWidgetState extends State<LogonWidget> {
     return Form(
         key: _formKey,
         child: Container(
-          padding: const EdgeInsets.all(15.0),
+        padding: const EdgeInsets.all(15.0),
           decoration: BoxDecoration(
             border: Border.all(color: Colors.blue),
             borderRadius: BorderRadius.all(Radius.circular(10.0)),
           ),
           child: new Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              Text('Sign in with your organizational account'),
+              SizedBox(height: 12.0),
               TextFormField(
                 controller: _userNameController,
                 validator: (value) {
@@ -72,7 +70,7 @@ class _LogonWidgetState extends State<LogonWidget> {
                     return 'Please enter a valid password';
                   }
                 },
-                obscureText: _obscureText,
+                obscureText: true,
                 decoration: InputDecoration(
                   filled: true,
                   hintText: 'Password',
