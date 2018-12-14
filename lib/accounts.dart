@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'models.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'styles.dart';
 
 class AccountWidget extends StatelessWidget {
   final User user;
@@ -47,6 +48,20 @@ class AccountWidget extends StatelessWidget {
                         return new ListView.builder(
                           itemBuilder: (BuildContext context, int index) {
                             return new ListTile(
+                                leading: DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    color: Color(0xff336dcc),
+                                    borderRadius: BorderRadius.circular(25.0),
+                                    border: Styles.leadingBorder,
+                                  ),
+                                  child: SizedBox(
+                                    height: 50.0,
+                                    width: 50.0,
+                                    child: Center(
+                                      child: Text('Ab', style: Styles.leadingText),
+                                    ),
+                                  ),
+                                ),
                                 title:  Text(accounts[index]['name']),
                                 subtitle: Text(accounts[index]['id']),
                                 onTap: () async {
