@@ -5,14 +5,21 @@ import 'package:flutter/material.dart';
 
 class AuthenticationResponse {
   final String username;
-  AuthenticationResponse({this.username});
+  final String errorDescription;
+  final String errorCode;
+
+  AuthenticationResponse({this.username, this.errorCode,this.errorDescription});
 
   factory AuthenticationResponse.fromJson(Map<String, dynamic> json) {
+    Map<String, dynamic> authenticateResponse =json['authenticateResponse'] as Map<String, dynamic>;
     return AuthenticationResponse(
-      username: json['username']
+        username: authenticateResponse['username'] as String,
+      errorDescription: authenticateResponse['errorDescription'] as String,
+      errorCode: authenticateResponse['errorCode'] as String
     );
   }
 }
+
 
 class Account {
   final int id;
@@ -48,3 +55,4 @@ enum Season {
   summer,
   autumn,
 }
+

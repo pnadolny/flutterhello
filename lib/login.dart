@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:xml2json/xml2json.dart';
 import 'accounts.dart';
 import 'models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -40,7 +40,7 @@ class _LogonWidgetState extends State<LogonWidget> {
     return Form(
         key: _formKey,
         child: Container(
-        padding: const EdgeInsets.all(15.0),
+          padding: const EdgeInsets.all(15.0),
           decoration: BoxDecoration(
             border: Border.all(color: Colors.blue),
             borderRadius: BorderRadius.all(Radius.circular(10.0)),
@@ -91,17 +91,23 @@ class _LogonWidgetState extends State<LogonWidget> {
                       if (_formKey.currentState.validate()) {
                         Scaffold.of(context).showSnackBar(
                             SnackBar(content: Text('Signing in...')));
-                        getUser(_userNameController.text,
+                        authenticate(_userNameController.text,
                                 _passwordController.text)
                             .then((data) {
-                          _saveCredentials();
+                          if (data.errorDescription != null &&
+                              data.errorDescription.isNotEmpty) {
+                            Scaffold.of(context).showSnackBar(
+                                SnackBar(content: Text(data.errorDescription)));
+                          } else {
+                            _saveCredentials();
 
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    AccountWidget(user: User())),
-                          );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      AccountWidget(user: User())),
+                            );
+                          }
                         }).catchError((e) {
                           Scaffold.of(context)
                               .showSnackBar(SnackBar(content: Text('$e')));
@@ -117,19 +123,36 @@ class _LogonWidgetState extends State<LogonWidget> {
         ));
   }
 
-  Future<AuthenticationResponse> getUser(
+  Future<AuthenticationResponse> authenticate(
       String username, String password) async {
     print(username);
     print(password);
 
-    final response =
-        await http.get('https://jsonplaceholder.typicode.com/users/1');
+    String url = "https://someplace.com";
+
+    /*
+    if (username.contains(" ")) {
+      List<String> env = username.split(" ");
+      String testurl = url.replaceAll("uattms", env.first + 'tms');
+      print(testurl);
+    }
+    */
+
+    final response = await http.post(url,
+        headers: {"Content-Type": "application/x-www-form-urlencoded"},
+        body: {'username': username, 'password': password});
+
     if (response.statusCode == 200) {
-      // If the call to the server was successful, parse the JSON
-      return AuthenticationResponse.fromJson(json.decode(response.body));
+      print(response.body);
+      // Create a client transformer
+      final Xml2Json xmlToJson = Xml2Json();
+      xmlToJson.parse(response.body);
+      print(xmlToJson.toParker());
+      return AuthenticationResponse.fromJson(json.decode(xmlToJson.toParker()));
     } else {
       // If that call was not successful, throw an error.
       throw Exception('Failed to load user');
     }
+    
   }
 }
